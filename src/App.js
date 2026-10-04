@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import quizData from './apptest'; // Your quiz data file
+import quizData from './quizData';
 import './index.css'; // Custom styles
 
 function App() {
