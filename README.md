@@ -18,7 +18,7 @@
 
 ## Tech stack
 
-React (hooks: `useState`, `useEffect`) · Create React App · plain CSS
+React (hooks: `useState`, `useEffect`, `useCallback`) · Create React App · plain CSS
 
 ## Getting started
 
