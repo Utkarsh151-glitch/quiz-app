@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import quizData from './quizData';
 import './index.css'; // Custom styles
 
@@ -11,25 +11,8 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [timerActive, setTimerActive] = useState(true);
 
-  useEffect(() => {
-    if (timerActive && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-    if (timeLeft === 0 && !feedback) {
-      handleNextQuestion(true); // Time is up: count as unanswered and move on
-    }
-  }, [timeLeft, timerActive]);
-
-  // Handle option selection
-  const handleOptionClick = (option) => {
-    setSelectedOption(option);
-  };
-
   // Handle moving to the next question
-  const handleNextQuestion = (timedOut = false) => {
+  const handleNextQuestion = useCallback((timedOut = false) => {
     if (feedback) return; // already moving on; ignore repeat clicks
     if (selectedOption === '' && !timedOut) return;
 
@@ -54,6 +37,27 @@ function App() {
         setShowScore(true);
       }
     }, 1000);
+  }, [feedback, selectedOption, currentQuestion]);
+
+  // Count down once per second while the timer is running
+  useEffect(() => {
+    if (!timerActive || timeLeft <= 0) return undefined;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, timerActive]);
+
+  // Time is up: count as unanswered and move on
+  useEffect(() => {
+    if (timeLeft === 0 && !feedback && !showScore) {
+      handleNextQuestion(true);
+    }
+  }, [timeLeft, feedback, showScore, handleNextQuestion]);
+
+  // Handle option selection
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
   };
 
   // Restart the quiz
