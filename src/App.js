@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import quizData from './apptest'; // Your quiz data file
+import quizData from './quizData';
 import './index.css'; // Custom styles
 
 function App() {
@@ -18,8 +18,8 @@ function App() {
       }, 1000);
       return () => clearInterval(timer);
     }
-    if (timeLeft === 0) {
-      handleNextQuestion(); // Move to next question when time is up
+    if (timeLeft === 0 && !feedback) {
+      handleNextQuestion(true); // Time is up: count as unanswered and move on
     }
   }, [timeLeft, timerActive]);
 
@@ -29,14 +29,18 @@ function App() {
   };
 
   // Handle moving to the next question
-  const handleNextQuestion = () => {
-    if (selectedOption === '') return;
+  const handleNextQuestion = (timedOut = false) => {
+    if (feedback) return; // already moving on; ignore repeat clicks
+    if (selectedOption === '' && !timedOut) return;
 
-    if (selectedOption === quizData[currentQuestion].answer) {
-      setScore(score + 1);
+    const { answer } = quizData[currentQuestion];
+    if (selectedOption === answer) {
+      setScore((s) => s + 1);
       setFeedback('Correct!');
+    } else if (selectedOption === '') {
+      setFeedback(`Time's up! Correct answer: ${answer}`);
     } else {
-      setFeedback(`Wrong! Correct answer: ${quizData[currentQuestion].answer}`);
+      setFeedback(`Wrong! Correct answer: ${answer}`);
     }
 
     // Move to next question after delay
@@ -95,7 +99,7 @@ function App() {
             ))}
           </div>
 
-          <button className="next-btn" onClick={handleNextQuestion}>Next</button>
+          <button className="next-btn" onClick={() => handleNextQuestion()} disabled={Boolean(feedback)}>Next</button>
 
           {feedback && <div className="feedback">{feedback}</div>}
 
