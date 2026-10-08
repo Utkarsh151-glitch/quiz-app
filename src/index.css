@@ -7,7 +7,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  box-sizing: border-box;
   background: linear-gradient(45deg, #f8f9fa, #cfd8dc);
 }
 
@@ -19,6 +20,7 @@ body {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 500px;
+  box-sizing: border-box;
   text-align: center;
 }
 
